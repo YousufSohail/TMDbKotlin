@@ -12,19 +12,17 @@ object ServiceGenerator {
 
     private val API_BASE_URL = "https://api.themoviedb.org/3/"
 
-    private val httpClient = OkHttpClient.Builder()
+    private val logging = HttpLoggingInterceptor()
 
-    private val builder = Retrofit.Builder()
+    private val httpBuilder = OkHttpClient.Builder().addInterceptor(logging)
+
+    private val retrofitBuilder = Retrofit.Builder()
             .baseUrl(API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-
-    private var retrofit = builder.build()
+            .client(httpBuilder.build())
 
     fun <S> createService(serviceClass: Class<S>): S {
-        val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY
-        httpClient.addInterceptor(logging)
-
-        return retrofit.create(serviceClass)
+        return retrofitBuilder.build().create(serviceClass)
     }
 }
