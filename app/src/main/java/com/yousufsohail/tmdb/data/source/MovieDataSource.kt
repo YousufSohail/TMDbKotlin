@@ -25,7 +25,7 @@ interface MovieDataSource {
         fun onDataNotAvailable()
     }
 
-    fun getMovies(page: Int, callback: LoadMoviesCallback)
+    fun getMovies(date: String, page: Int, callback: LoadMoviesCallback)
 
     fun getMovie(movieId: Int, callback: GetMovieCallback)
     

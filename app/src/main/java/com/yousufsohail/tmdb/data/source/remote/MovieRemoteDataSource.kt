@@ -14,8 +14,8 @@ import retrofit2.Response
  */
 class MovieRemoteDataSource(private val webservice: Webservice): MovieDataSource {
 
-    override fun getMovies(page: Int, callback: MovieDataSource.LoadMoviesCallback) {
-        val call = webservice.getMoviesLatest(API_KEY, page = 1)
+    override fun getMovies(date: String, page: Int, callback: MovieDataSource.LoadMoviesCallback) {
+        val call = webservice.getMoviesLatest(API_KEY, page = page, releaseDate = date)
         call.enqueue(object : Callback<GetMoviesLatestResponse>(){
             override fun onSuccess(call: Call<GetMoviesLatestResponse>, response: Response<GetMoviesLatestResponse>) {
                 callback.onMoviesLoaded(response.body()!!)

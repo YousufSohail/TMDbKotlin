@@ -9,8 +9,8 @@ import android.support.annotation.VisibleForTesting
  */
 class MovieRepository(private val movieRemoteDataSource: MovieDataSource) : MovieDataSource {
 
-    override fun getMovies(page: Int, callback: MovieDataSource.LoadMoviesCallback) {
-        movieRemoteDataSource.getMovies(page, callback)
+    override fun getMovies(date: String, page: Int, callback: MovieDataSource.LoadMoviesCallback) {
+        movieRemoteDataSource.getMovies(date, page, callback)
     }
 
     override fun getMovie(movieId: Int, callback: MovieDataSource.GetMovieCallback) {
