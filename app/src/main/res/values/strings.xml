@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TMDb</string>
     <string name="title_movie_detail">Movie Detail</string>
+    <string name="filter">Filter</string>
 </resources>

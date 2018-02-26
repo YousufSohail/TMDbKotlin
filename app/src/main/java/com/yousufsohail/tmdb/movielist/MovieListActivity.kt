@@ -1,6 +1,6 @@
 package com.yousufsohail.tmdb.movielist
 
-import android.arch.lifecycle.Observer
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.DatePicker
 import com.yousufsohail.tmdb.R
 import com.yousufsohail.tmdb.common.BaseAdapter
 import com.yousufsohail.tmdb.common.obtainViewModel
@@ -17,6 +20,7 @@ import com.yousufsohail.tmdb.moviedetail.MovieDetailActivity
 import com.yousufsohail.tmdb.moviedetail.MovieDetailFragment
 import kotlinx.android.synthetic.main.activity_movie_list.*
 import kotlinx.android.synthetic.main.movie_list.*
+import java.util.*
 
 /**
  * An activity representing a list of Pings. This activity
@@ -26,7 +30,7 @@ import kotlinx.android.synthetic.main.movie_list.*
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-class MovieListActivity : AppCompatActivity(), BaseAdapter.OnItemClickListener<Movie> {
+class MovieListActivity : AppCompatActivity(), BaseAdapter.OnItemClickListener<Movie>, DatePickerDialog.OnDateSetListener {
 
     private lateinit var viewDataBinding: ActivityMovieListBinding
     private lateinit var adapter: BaseAdapter<Movie>
@@ -44,9 +48,6 @@ class MovieListActivity : AppCompatActivity(), BaseAdapter.OnItemClickListener<M
         viewDataBinding.let {
             it.viewmodel = obtainViewModel()
             initAdapter()
-            it.viewmodel!!.items.observe(this, Observer {
-                adapter.items = it!!
-            })
         }
 
         setSupportActionBar(toolbar)
@@ -75,6 +76,27 @@ class MovieListActivity : AppCompatActivity(), BaseAdapter.OnItemClickListener<M
         viewDataBinding.viewmodel?.start()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.movie_list, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_filter -> {
+                DatePickerDialog(
+                        this,
+                        this,
+                        viewDataBinding.viewmodel!!.calendar.get(Calendar.YEAR),
+                        viewDataBinding.viewmodel!!.calendar.get(Calendar.MONTH),
+                        viewDataBinding.viewmodel!!.calendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onItemClick(item: Movie) {
         if (mTwoPane) {
             val fragment = MovieDetailFragment().apply {
@@ -93,6 +115,10 @@ class MovieListActivity : AppCompatActivity(), BaseAdapter.OnItemClickListener<M
         }
     }
 
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        viewDataBinding.viewmodel!!.setDate(year, month, dayOfMonth)
+    }
+
     private fun initAdapter() {
         val viewModel = viewDataBinding.viewmodel
         if (viewModel != null) {
@@ -104,7 +130,7 @@ class MovieListActivity : AppCompatActivity(), BaseAdapter.OnItemClickListener<M
         }
     }
 
-    fun obtainViewModel(): MovieListViewModel = obtainViewModel(MovieListViewModel::class.java)
+    private fun obtainViewModel(): MovieListViewModel = obtainViewModel(MovieListViewModel::class.java)
 
     companion object {
         private val TAG = this::class.java.simpleName
